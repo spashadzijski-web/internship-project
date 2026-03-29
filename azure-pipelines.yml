@@ -13,10 +13,21 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+# 1. Инсталира .NET
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+  displayName: 'Install .NET SDK'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+# 2. Restore dependencies
+- script: dotnet restore
+  displayName: 'Restore dependencies'
+
+# 3. Build
+- script: dotnet build --configuration Release
+  displayName: 'Build project'
+
+# 4. Run tests
+- script: dotnet test --configuration Release --no-build --verbosity normal
+  displayName: 'Run tests'
