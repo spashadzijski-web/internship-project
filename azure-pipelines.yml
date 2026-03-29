@@ -4,23 +4,30 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '8.x'
+stages:
 
-- script: |
-    echo "=== FILES ==="
-    pwd
-    ls -R
-  displayName: 'Debug files'
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
 
-- script: dotnet restore
-  displayName: 'Restore'
+    - script: dotnet restore
+    - script: dotnet build --configuration Release
 
-- script: dotnet build --configuration Release
-  displayName: 'Build'
+- stage: Test
+  dependsOn: Build
+  jobs:
+  - job: TestJob
+    steps:
+    - script: dotnet test --configuration Release --no-build
 
-- script: dotnet test --configuration Release --no-build
-  displayName: 'Test'
+- stage: Deploy
+  dependsOn: Test
+  jobs:
+  - job: DeployJob
+    steps:
+    - script: echo "Deploying application..."
