@@ -13,6 +13,12 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- script: |
+    echo "Current folder:"
+    pwd
+    echo "Files:"
+    ls -R
+  displayName: 'DEBUG - show files'
 # 1. Инсталира .NET
 - task: UseDotNet@2
   inputs:
