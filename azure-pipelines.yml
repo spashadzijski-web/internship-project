@@ -26,11 +26,11 @@ steps:
     version: '8.x'
   displayName: 'Install .NET SDK'
 
-- script: dotnet restore **/*.sln
+- script: dotnet restore MyApp.sln
   displayName: 'Restore dependencies'
 
-- script: dotnet build **/*.sln --configuration Release
+- script: dotnet build MyApp.sln --configuration Release
   displayName: 'Build project'
 
-- script: dotnet test **/*.sln --configuration Release --no-build --verbosity normal
+- script: dotnet test MyApp.sln --configuration Release --no-build
   displayName: 'Run tests'
