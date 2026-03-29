@@ -10,12 +10,17 @@ steps:
     packageType: 'sdk'
     version: '8.x'
 
-# 🔥 ВАЖНО: използваме glob вместо твърд path
-- script: dotnet restore **/*.sln
+- script: |
+    echo "=== FILES ==="
+    pwd
+    ls -R
+  displayName: 'Debug files'
+
+- script: dotnet restore
   displayName: 'Restore'
 
-- script: dotnet build **/*.sln --configuration Release
+- script: dotnet build --configuration Release
   displayName: 'Build'
 
-- script: dotnet test **/*.sln --configuration Release --no-build
+- script: dotnet test --configuration Release --no-build
   displayName: 'Test'
