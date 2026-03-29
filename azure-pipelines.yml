@@ -17,6 +17,12 @@ stages:
 
     - script: dotnet restore
     - script: dotnet build --configuration Release
+    
+    - script: dotnet publish MyApp/MyApp.csproj -c Release -o $(Build.ArtifactStagingDirectory)
+      displayName: 'Publish app'
+
+    - publish: $(Build.ArtifactStagingDirectory)
+      artifact: drop
 
 - stage: Test
   dependsOn: Build
