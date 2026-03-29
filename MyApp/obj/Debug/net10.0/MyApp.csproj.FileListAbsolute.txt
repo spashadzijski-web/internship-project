@@ -1,0 +1,15 @@
+/workspaces/internship-project/MyApp/bin/Debug/net10.0/MyApp
+/workspaces/internship-project/MyApp/bin/Debug/net10.0/MyApp.deps.json
+/workspaces/internship-project/MyApp/bin/Debug/net10.0/MyApp.runtimeconfig.json
+/workspaces/internship-project/MyApp/bin/Debug/net10.0/MyApp.dll
+/workspaces/internship-project/MyApp/bin/Debug/net10.0/MyApp.pdb
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.AssemblyInfoInputs.cache
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.AssemblyInfo.cs
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.csproj.CoreCompileInputs.cache
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.sourcelink.json
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.dll
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/refint/MyApp.dll
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.pdb
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/MyApp.genruntimeconfig.cache
+/workspaces/internship-project/MyApp/obj/Debug/net10.0/ref/MyApp.dll
