@@ -1,36 +1,21 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
-
-pr:
 - main
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: |
-    echo "Current folder:"
-    pwd
-    echo "Files:"
-    ls -R
-  displayName: 'DEBUG - show files'
-# 1. Инсталира .NET
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
     version: '8.x'
-  displayName: 'Install .NET SDK'
 
-- script: dotnet restore $(Build.SourcesDirectory)/MyApp.sln
-  displayName: 'Restore dependencies'
+# 🔥 ВАЖНО: използваме glob вместо твърд path
+- script: dotnet restore **/*.sln
+  displayName: 'Restore'
 
-- script: dotnet build $(Build.SourcesDirectory)/MyApp.sln --configuration Release
-  displayName: 'Build project'
+- script: dotnet build **/*.sln --configuration Release
+  displayName: 'Build'
 
-- script: dotnet test $(Build.SourcesDirectory)/MyApp.sln --configuration Release --no-build
-  displayName: 'Run tests'
+- script: dotnet test **/*.sln --configuration Release --no-build
+  displayName: 'Test'
