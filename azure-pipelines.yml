@@ -26,11 +26,11 @@ steps:
     version: '8.x'
   displayName: 'Install .NET SDK'
 
-- script: dotnet restore MyApp.sln
+- script: dotnet restore $(Build.SourcesDirectory)/MyApp.sln
   displayName: 'Restore dependencies'
 
-- script: dotnet build MyApp.sln --configuration Release
+- script: dotnet build $(Build.SourcesDirectory)/MyApp.sln --configuration Release
   displayName: 'Build project'
 
-- script: dotnet test MyApp.sln --configuration Release --no-build
+- script: dotnet test $(Build.SourcesDirectory)/MyApp.sln --configuration Release --no-build
   displayName: 'Run tests'
