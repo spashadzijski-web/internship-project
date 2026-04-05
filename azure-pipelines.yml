@@ -6,7 +6,7 @@ variables:
 
 stages:
 
-# 🔹 BUILD (включва и тест)
+# 🔹 BUILD
 - stage: Build
   displayName: Build & Test
   jobs:
@@ -35,7 +35,7 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
 
-# 🔹 DEV (няма approval)
+# 🔹 DEV
 - stage: Dev
   displayName: Deploy to Dev
   dependsOn: Build
@@ -48,23 +48,38 @@ stages:
           steps:
           - download: current
             artifact: drop
-
           - script: echo "Deploying to DEV..."
-            displayName: Fake Deploy Dev
 
-# 🔹 STAGING (ИМА approval 🔥)
+# 🔹 STAGING
 - stage: Staging
   displayName: Deploy to Staging
   dependsOn: Dev
   jobs:
   - deployment: DeployStaging
-    environment: staging   # 🔥 тук е approval-а
+    environment: staging
     strategy:
       runOnce:
         deploy:
           steps:
           - download: current
             artifact: drop
-
           - script: echo "Deploying to STAGING..."
-            displayName: Fake Deploy Staging
+
+# 🔴 PRODUCTION (🔥 новото)
+- stage: Production
+  displayName: Deploy to Production
+  dependsOn: Staging
+
+  # 🔥 само от main branch
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+  jobs:
+  - deployment: DeployProd
+    environment: production   # 🔐 approval тук
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - script: echo "Deploying to PRODUCTION..."
