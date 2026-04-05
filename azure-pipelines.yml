@@ -1,43 +1,54 @@
 trigger:
 - main
 
+pool:
+  vmImage: ubuntu-latest
+
 variables:
   buildConfiguration: 'Release'
 
 stages:
 
-# 🔹 BUILD
+# ================= BUILD + TEST =================
 - stage: Build
-  displayName: Build & Test
+  displayName: "Build & Test"
   jobs:
   - job: BuildJob
-    pool:
-      vmImage: 'ubuntu-latest'
-
     steps:
+
     - task: UseDotNet@2
+      displayName: "Install .NET"
       inputs:
         packageType: 'sdk'
         version: '8.x'
 
     - script: dotnet restore
-      displayName: Restore
+      displayName: "Restore"
 
     - script: dotnet build --configuration $(buildConfiguration)
-      displayName: Build
+      displayName: "Build"
 
-    - script: dotnet test --configuration $(buildConfiguration) --no-build
-      displayName: Test
+    # ✅ ТЕСТОВЕ
+    - script: dotnet test --configuration $(buildConfiguration) --no-build --logger trx
+      displayName: "Run tests"
+
+    # ✅ ПУБЛИКУВАНЕ НА РЕЗУЛТАТИ
+    - task: PublishTestResults@2
+      displayName: "Publish test results"
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
 
     - script: dotnet publish MyApp/MyApp.csproj -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)
-      displayName: Publish
+      displayName: "Publish app"
 
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
 
-# 🔹 DEV
+
+# ================= DEV =================
 - stage: Dev
-  displayName: Deploy to Dev
+  displayName: "Deploy to Dev"
   dependsOn: Build
   jobs:
   - deployment: DeployDev
@@ -50,9 +61,10 @@ stages:
             artifact: drop
           - script: echo "Deploying to DEV..."
 
-# 🔹 STAGING
+
+# ================= STAGING =================
 - stage: Staging
-  displayName: Deploy to Staging
+  displayName: "Deploy to Staging"
   dependsOn: Dev
   jobs:
   - deployment: DeployStaging
@@ -65,17 +77,14 @@ stages:
             artifact: drop
           - script: echo "Deploying to STAGING..."
 
-# 🔴 PRODUCTION (🔥 новото)
+
+# ================= PRODUCTION =================
 - stage: Production
-  displayName: Deploy to Production
+  displayName: "Deploy to Production"
   dependsOn: Staging
-
-  # 🔥 само от main branch
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-
   jobs:
   - deployment: DeployProd
-    environment: production   # 🔐 approval тук
+    environment: production
     strategy:
       runOnce:
         deploy:
