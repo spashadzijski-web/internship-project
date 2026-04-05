@@ -1,14 +1,19 @@
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  buildConfiguration: 'Release'
 
 stages:
 
+# 🔹 BUILD (включва и тест)
 - stage: Build
+  displayName: Build & Test
   jobs:
   - job: BuildJob
+    pool:
+      vmImage: 'ubuntu-latest'
+
     steps:
     - task: UseDotNet@2
       inputs:
@@ -16,24 +21,50 @@ stages:
         version: '8.x'
 
     - script: dotnet restore
-    - script: dotnet build --configuration Release
-    
-    - script: dotnet publish MyApp/MyApp.csproj -c Release -o $(Build.ArtifactStagingDirectory)
-      displayName: 'Publish app'
+      displayName: Restore
+
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: Build
+
+    - script: dotnet test --configuration $(buildConfiguration) --no-build
+      displayName: Test
+
+    - script: dotnet publish MyApp/MyApp.csproj -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)
+      displayName: Publish
 
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
 
-- stage: Test
+# 🔹 DEV (няма approval)
+- stage: Dev
+  displayName: Deploy to Dev
   dependsOn: Build
   jobs:
-  - job: TestJob
-    steps:
-    - script: dotnet test --configuration Release --no-build
+  - deployment: DeployDev
+    environment: dev
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
 
-- stage: Deploy
-  dependsOn: Test
+          - script: echo "Deploying to DEV..."
+            displayName: Fake Deploy Dev
+
+# 🔹 STAGING (ИМА approval 🔥)
+- stage: Staging
+  displayName: Deploy to Staging
+  dependsOn: Dev
   jobs:
-  - job: DeployJob
-    steps:
-    - script: echo "Deploying application..."
+  - deployment: DeployStaging
+    environment: staging   # 🔥 тук е approval-а
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - script: echo "Deploying to STAGING..."
+            displayName: Fake Deploy Staging
