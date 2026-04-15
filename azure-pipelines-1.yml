@@ -13,7 +13,7 @@ variables:
   dockerRegistryServiceConnection: 'bdd774d6-343d-4b56-b6b6-c0b1b877de23'
   imageRepository: 'dockerimage'
   containerRegistry: 'myintershipegistri.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
+  dockerfilePath: 'MyApp/Dockerfile'
   tag: '$(Build.BuildId)'
 
   # Agent VM image name
